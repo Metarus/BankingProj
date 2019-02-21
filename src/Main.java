@@ -1,4 +1,5 @@
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.util.Scanner;
 
@@ -26,9 +27,21 @@ public class Main {
         }
     }
     public static void signup() {
-        String username=doubleVerify("username", "Usernames");
+        String username;
+        while(true) {
+            username=doubleVerify("username", "Usernames");
+            File[] listOfFiles = new File("data").listFiles();
+            boolean notExist=true;
+            for(int i=0; i<listOfFiles.length; i++) {
+                if(listOfFiles[i].toString().equals("data\\"+username+".txt")) {
+                    notExist=false;
+                }
+            }
+            if(notExist) break;
+            System.out.println("Username taken, please enter another");
+        }
         String password=doubleVerify("password", "Passwords");
-            writeToFile(username+".txt", password);
+        writeToFile("data/"+username+".txt", password);
     }
     public static void login() {
         //todo
@@ -47,13 +60,12 @@ public class Main {
     }
     public static void writeToFile(String file, String write) {
         try {
-            System.out.println("progress?");
             BufferedWriter writer=new BufferedWriter(new FileWriter(file));
             writer.write(write);
             writer.flush();
             writer.close();
         } catch(Exception e) {
-            System.out.println("Error has occured");
+            System.out.println("Error has occurred");
         }
     }
 }
