@@ -1,6 +1,4 @@
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.Scanner;
 
 public class Main {
@@ -30,7 +28,7 @@ public class Main {
         String username;
         while(true) {
             username=doubleVerify("username", "Usernames");
-            File[] listOfFiles = new File("data").listFiles();
+            File[] listOfFiles=new File("data").listFiles();
             boolean notExist=true;
             for(int i=0; i<listOfFiles.length; i++) {
                 if(listOfFiles[i].toString().equals("data\\"+username+".txt")) {
@@ -41,10 +39,33 @@ public class Main {
             System.out.println("Username taken, please enter another");
         }
         String password=doubleVerify("password", "Passwords");
-        writeToFile("data/"+username+".txt", password);
+        writeToFile("data\\"+username+".txt", password);
     }
     public static void login() {
-        //todo
+        String user;
+        while(true) {
+            System.out.println("Please enter your username");
+            user=sc.nextLine();
+            File[] listOfFiles = new File("data").listFiles();
+            boolean exists=false;
+            for(int i=0; i<listOfFiles.length; i++) {
+                if(listOfFiles[i].toString().equals("data\\"+user+".txt")) {
+                    exists=true;
+                }
+            }
+            if(exists) break;
+            System.out.println("No user named "+user+" exists");
+        }
+        File userFile=new File("data\\"+user+".txt");
+        try {
+            BufferedReader reader=new BufferedReader(new FileReader(userFile));
+            System.out.println("Enter your password");
+            if(reader.readLine().equals(sc.nextLine())) {
+                System.out.println("Success!!");
+            } else {
+                System.out.println("Wrong password");
+            }
+        } catch(Exception e) {}
     }
     public static String doubleVerify(String info, String infoP) {
         String var;
