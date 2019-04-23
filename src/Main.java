@@ -2,25 +2,39 @@ import java.io.*;
 import java.util.Scanner;
 
 public class Main {
+    static User loggedIn;
     static Scanner sc=new Scanner(System.in);
     public static void main(String[] args) {
         startScreen();
     }
     public static void startScreen() {
-        boolean login=true;
-        while(login) {
-            System.out.println("1 to login, 2 to signup");
-            switch(sc.nextLine()) {
-                case "1":
-                    login();
-                    login=false;
-                    break;
-                case "2":
-                    signup();
-                    break;
-                default:
-                    System.out.println("Invalid entry");
-                    break;
+        while(true) {
+            if(loggedIn==null) {
+                System.out.println("1 to login, 2 to signup");
+                switch(sc.nextLine()) {
+                    case "1":
+                        login();
+                        break;
+                    case "2":
+                        signup();
+                        break;
+                    default:
+                        System.out.println("Invalid entry");
+                        break;
+                }
+            } else {
+                System.out.println("1 to deposit, 2 to withdraw");
+                switch(sc.nextLine()) {
+                    case "1":
+                        deposit();
+                        break;
+                    case "2":
+                        withdraw();
+                        break;
+                    default:
+                        System.out.println("Invalid entry");
+                        break;
+                }
             }
         }
     }
@@ -39,33 +53,53 @@ public class Main {
             System.out.println("Username taken, please enter another");
         }
         String password=doubleVerify("password", "Passwords");
-        writeToFile("data\\"+username+".txt", password);
+        writeToFile("data\\"+username+".txt", password+"\n0");
     }
     public static void login() {
         String user;
-        while(true) {
-            System.out.println("Please enter your username");
-            user=sc.nextLine();
-            File[] listOfFiles = new File("data").listFiles();
-            boolean exists=false;
-            for(int i=0; i<listOfFiles.length; i++) {
-                if(listOfFiles[i].toString().equals("data\\"+user+".txt")) {
-                    exists=true;
-                }
+        System.out.println("Please enter your username");
+        user=sc.nextLine();
+        File[] listOfFiles = new File("data").listFiles();
+        boolean exists=false;
+        for(int i=0; i<listOfFiles.length; i++) {
+            if(listOfFiles[i].toString().equals("data\\"+user+".txt")) {
+                exists=true;
             }
-            if(exists) break;
-            System.out.println("No user named "+user+" exists");
         }
-        File userFile=new File("data\\"+user+".txt");
+        if(exists) {
+            try {
+                BufferedReader reader=new BufferedReader(new FileReader("data\\"+user+".txt"));
+                System.out.println("Enter your password");
+                if(reader.readLine().equals(sc.nextLine())) {
+                    loggedIn=new User(user);
+                } else {
+                    System.out.println("Wrong password");
+                }
+                reader.close();
+            } catch(Exception e) {}
+        } else System.out.println("No user named "+user+" exists");
+    }
+    public static void deposit() {
+        System.out.println("Please enter how much you'd like to deposit");
+        float deposit;
         try {
-            BufferedReader reader=new BufferedReader(new FileReader(userFile));
-            System.out.println("Enter your password");
-            if(reader.readLine().equals(sc.nextLine())) {
-                System.out.println("Success!!");
-            } else {
-                System.out.println("Wrong password");
-            }
-        } catch(Exception e) {}
+            deposit=Float.parseFloat(sc.nextLine());
+            loggedIn.changeBal(deposit);
+            System.out.println("You now have "+loggedIn.getBal());
+        } catch(Exception e) {
+            System.out.println("Please enter a valid number");
+        }
+    }
+    public static void withdraw() {
+        System.out.println("Please enter how much you'd like to withdraw");
+        float withdraw;
+        try {
+            withdraw=Float.parseFloat(sc.nextLine());
+            loggedIn.changeBal(-withdraw);
+            System.out.println("You now have "+loggedIn.getBal());
+        } catch(Exception e) {
+            System.out.println("Please enter a valid number");
+        }
     }
     public static String doubleVerify(String info, String infoP) {
         String var;
