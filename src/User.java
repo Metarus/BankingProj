@@ -7,9 +7,21 @@ import java.util.List;
 
 public class User {
     String loc;
+
+    /**
+     * Initializer
+     * @Author Rana
+     * @param user The user
+     */
     User(String user) {
         loc=user;
     }
+
+    /**
+     * Changes the balance
+     * @Author Rana
+     * @param amount The amount it changes
+     */
     void changeBal(float amount) {
         try {
             File tempFile=new File("data\\tempFile.txt");
@@ -31,6 +43,12 @@ public class User {
             tempFile.delete();
         } catch(Exception e) {}
     }
+
+    /**
+     * Gets the balance
+     * @Author Rana
+     * @return Balance
+     */
     float getBal() {
         try {
             return Float.parseFloat(Files.readAllLines(Paths.get("data\\"+loc+".txt")).get(1));

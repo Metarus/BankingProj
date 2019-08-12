@@ -2,15 +2,23 @@ import java.io.*;
 import java.util.Scanner;
 
 public class Main {
+
     static User loggedIn;
     static Scanner sc=new Scanner(System.in);
+
     public static void main(String[] args) {
         startScreen();
     }
+
+    /**
+     * @Author Rana
+     * Has everything within it
+     */
     public static void startScreen() {
-        while(true) {
+        boolean running=true;
+        while(running) {
             if(loggedIn==null) {
-                System.out.println("1 to login, 2 to signup");
+                System.out.println("1 to login, 2 to signup, 3 to exit");
                 switch(sc.nextLine()) {
                     case "1":
                         login();
@@ -18,18 +26,28 @@ public class Main {
                     case "2":
                         signup();
                         break;
+                    case "3":
+                        running=false;
+                        break;
                     default:
                         System.out.println("Invalid entry");
                         break;
                 }
             } else {
-                System.out.println("1 to deposit, 2 to withdraw");
+                System.out.println("1 to deposit, 2 to withdraw, 3 to logout, 4 to exit");
                 switch(sc.nextLine()) {
                     case "1":
                         deposit();
                         break;
                     case "2":
                         withdraw();
+                        break;
+                    case "3":
+                        loggedIn=null;
+                        break;
+                    case "4":
+                        running=false;
+                        System.out.println("Exiting");
                         break;
                     default:
                         System.out.println("Invalid entry");
@@ -38,6 +56,11 @@ public class Main {
             }
         }
     }
+
+    /**
+     * @Author Rana
+     * Runs the entire signup procedure
+     */
     public static void signup() {
         String username;
         while(true) {
@@ -55,6 +78,11 @@ public class Main {
         String password=doubleVerify("password", "Passwords");
         writeToFile("data\\"+username+".txt", password+"\n0");
     }
+
+    /**
+     * @Author Rana
+     * Runs the entire login procedure
+     */
     public static void login() {
         String user;
         System.out.println("Please enter your username");
@@ -79,6 +107,11 @@ public class Main {
             } catch(Exception e) {}
         } else System.out.println("No user named "+user+" exists");
     }
+
+    /**
+     * @Author Rana
+     * Asks for info to deposit
+     */
     public static void deposit() {
         System.out.println("Please enter how much you'd like to deposit");
         float deposit;
@@ -90,6 +123,11 @@ public class Main {
             System.out.println("Please enter a valid number");
         }
     }
+
+    /**
+     * @Author Rana
+     * Asks info for withdraw
+     */
     public static void withdraw() {
         System.out.println("Please enter how much you'd like to withdraw");
         float withdraw;
@@ -101,6 +139,14 @@ public class Main {
             System.out.println("Please enter a valid number");
         }
     }
+
+    /**
+     * @Author Rana
+     * @param info Input
+     * @param infoP Input plural
+     * @return The input if verified
+     * Double verifies a string and returns it
+     */
     public static String doubleVerify(String info, String infoP) {
         String var;
         while(true) {
@@ -113,6 +159,13 @@ public class Main {
         }
         return var;
     }
+
+    /**
+     * @Author Rana
+     * @param file File
+     * @param write Being written
+     * A function to write stuff to files
+     */
     public static void writeToFile(String file, String write) {
         try {
             BufferedWriter writer=new BufferedWriter(new FileWriter(file));
