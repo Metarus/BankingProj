@@ -68,7 +68,7 @@ public class Main {
             File[] listOfFiles=new File("data").listFiles();
             boolean notExist=true;
             for(int i=0; i<listOfFiles.length; i++) {
-                if(listOfFiles[i].toString().equals("data\\"+username+".txt")) {
+                if(listOfFiles[i].toString().equals("data"+File.separator+username+".txt")) {
                     notExist=false;
                 }
             }
@@ -76,7 +76,7 @@ public class Main {
             System.out.println("Username taken, please enter another");
         }
         String password=doubleVerify("password", "Passwords");
-        writeToFile("data\\"+username+".txt", password+"\n0");
+        writeToFile("data"+File.separator+username+".txt", password+"\n0");
     }
 
     /**
@@ -90,13 +90,13 @@ public class Main {
         File[] listOfFiles = new File("data").listFiles();
         boolean exists=false;
         for(int i=0; i<listOfFiles.length; i++) {
-            if(listOfFiles[i].toString().equals("data\\"+user+".txt")) {
+            if(listOfFiles[i].toString().equals("data"+File.separator+user+".txt")) {
                 exists=true;
             }
         }
         if(exists) {
             try {
-                BufferedReader reader=new BufferedReader(new FileReader("data\\"+user+".txt"));
+                BufferedReader reader=new BufferedReader(new FileReader("data"+File.separator+user+".txt"));
                 System.out.println("Enter your password");
                 if(reader.readLine().equals(sc.nextLine())) {
                     loggedIn=new User(user);
@@ -117,8 +117,12 @@ public class Main {
         float deposit;
         try {
             deposit=Float.parseFloat(sc.nextLine());
-            loggedIn.changeBal(deposit);
-            System.out.println("You now have "+loggedIn.getBal());
+            if(deposit>0) {
+                loggedIn.changeBal(deposit);
+                System.out.println("You now have "+loggedIn.getBal());
+            } else {
+                System.out.println("Please enter a positive value");
+            }
         } catch(Exception e) {
             System.out.println("Please enter a valid number");
         }
@@ -133,8 +137,12 @@ public class Main {
         float withdraw;
         try {
             withdraw=Float.parseFloat(sc.nextLine());
+            if(withdraw>0) {
             loggedIn.changeBal(-withdraw);
             System.out.println("You now have "+loggedIn.getBal());
+            } else {
+                System.out.println("Please enter a positive value");
+            }
         } catch(Exception e) {
             System.out.println("Please enter a valid number");
         }
