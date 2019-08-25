@@ -3,10 +3,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class User {
     String loc; //The location of the user file
+    static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+    static LocalDateTime now = LocalDateTime.now();
 
     /**
      * Initializer
@@ -22,19 +26,19 @@ public class User {
      * @Author Rana
      * @param amount The amount it changes
      */
-    void changeBal(float amount) {
+    void changeBal(float amount, String info) {
         try {
             File tempFile=new File("data"+File.separator+"users"+File.separator+"tempFile.txt");
             BufferedWriter writer = new BufferedWriter(new FileWriter("data"+File.separator+"users"+File.separator+"tempFile.txt"));
             {
                 List<String> lines=Files.readAllLines(Paths.get("data"+File.separator+"users"+File.separator+loc+".txt"));
-                float newBal=Float.parseFloat(lines.get(2))+amount;
+                float newBal=Float.parseFloat(lines.get(3))+amount;
                 for(int i=0; i<lines.size(); i++) {
-                    if(i==2) {
+                    if(i==3) {
                         writer.write(newBal+"\n");
                     } else writer.write(lines.get(i)+"\n");
                 }
-                writer.write(amount+"\n");
+                writer.write("(" + dtf.format(now) + ") "+info+amount+"\n");
                 writer.flush();
                 writer.close();
             }
@@ -56,7 +60,7 @@ public class User {
                 String PremiumUser = "Premium";
                 List<String> lines = Files.readAllLines(Paths.get("data"+File.separator+"users"+File.separator+loc+".txt"));
                 for (int i = 0; i < lines.size(); i++) {
-                    if (i == 1) {
+                    if (i == 2) {
                         writer.write(PremiumUser + "\n");
                     } else {
                         writer.write(lines.get(i) + "\n");
@@ -78,7 +82,7 @@ public class User {
      */
     float getBal() {
         try {
-            return Float.parseFloat(Files.readAllLines(Paths.get("data"+File.separator+"users"+File.separator+loc+".txt")).get(2));
+            return Float.parseFloat(Files.readAllLines(Paths.get("data"+File.separator+"users"+File.separator+loc+".txt")).get(3));
         } catch(Exception e) {}
         return 0;
     }

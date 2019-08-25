@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class Main {
 
@@ -39,7 +40,7 @@ public class Main {
                 if(loggedIn.UserPremiumYes()) {
                     System.out.println("Premium User");
                 }
-                System.out.println("1 to deposit, 2 to withdraw, 4 to register for premium, 5 to submit feedback, 6 to log out, 7 to exit");
+                System.out.println("1 to deposit, 2 to withdraw, 3 to transfer, 4 to register for premium, 5 to read account history, 6 to submit feedback, 7 to log out, 8 to exit");
                 switch(sc.nextLine()) {
                     case "1":
                         deposit();
@@ -54,14 +55,17 @@ public class Main {
                         Premium();
                         break;
                     case "5":
+                        readAccountHistory();
+                        break;
+                    case "6":
                         System.out.println("Please enter your feedback:");
                         String Feedback = sc.nextLine();
                         submitFeedback(loggedIn.getLoc(),Feedback);
                         break;
-                    case "6":
+                    case "7":
                         loggedIn=null;
                         break;
-                    case "7":
+                    case "8":
                         running=false;
                         System.out.println("Exiting");
                         break;
@@ -79,6 +83,7 @@ public class Main {
      */
     public static void signup() {
         String username;
+        String uniqueID = UUID.randomUUID().toString();
         while(true) {
             username=doubleVerify("username", "Usernames");
             File[] listOfFiles=new File("data"+File.separator+"users").listFiles();
@@ -92,45 +97,7 @@ public class Main {
             System.out.println("Username taken, please enter another");
         }
         String password=doubleVerify("password", "Passwords");
-        writeToFile("data"+File.separator+"users"+File.separator+username+".txt", password+"\n0\n0");
-    }
-
-    /**
-     * @Author Rana
-     */
-    public static void transfer() {
-        System.out.println("Please enter the username to whom you'd like to transfer funds");
-        User transferToUser=null;
-        while(true) {
-            String transferTo = sc.nextLine();
-            File[] listOfFiles = new File("data"+File.separator+"users").listFiles();
-            boolean foundUser=false;
-            for (int i = 0; i < listOfFiles.length; i++) {
-                if (listOfFiles[i].toString().equals("data"+File.separator+"users"+File.separator+transferTo+".txt")) {
-                    transferToUser=new User(transferTo);
-                    foundUser=true;
-                }
-            }
-            if(foundUser) {
-                break;
-            } else System.out.println("User does not exist");
-        }
-        System.out.println("Please enter the unique ID of the user");
-        //todo
-        System.out.println("Please enter how much you'd like to transfer");
-        float transfer;
-        try {
-            transfer=Float.parseFloat(sc.nextLine());
-            if(transfer>0) {
-                loggedIn.changeBal(-transfer);
-                transferToUser.changeBal(transfer);
-                System.out.println("Transfer complete! You now have "+loggedIn.getBal());
-            } else {
-                System.out.println("Please enter a positive value");
-            }
-        } catch(Exception e) {
-            System.out.println("Please enter a valid number");
-        }
+        writeToFile("data"+File.separator+"users"+File.separator+username+".txt", password+"\n"+uniqueID+"\nNot Premium\n0");
     }
 
     /**
@@ -172,7 +139,7 @@ public class Main {
         try {
             deposit=Float.parseFloat(sc.nextLine());
             if(deposit>0) {
-                loggedIn.changeBal(deposit);
+                loggedIn.changeBal(deposit, "Deposit ");
                 System.out.println("You now have "+loggedIn.getBal());
             } else {
                 System.out.println("Please enter a positive value");
@@ -192,8 +159,46 @@ public class Main {
         try {
             withdraw=Float.parseFloat(sc.nextLine());
             if(withdraw>0) {
-            loggedIn.changeBal(-withdraw);
+            loggedIn.changeBal(-withdraw, "Withdraw ");
             System.out.println("You now have "+loggedIn.getBal());
+            } else {
+                System.out.println("Please enter a positive value");
+            }
+        } catch(Exception e) {
+            System.out.println("Please enter a valid number");
+        }
+    }
+
+    /**
+     * @Author Rana
+     */
+    public static void transfer() {
+        System.out.println("Please enter the username to whom you'd like to transfer funds");
+        User transferToUser=null;
+        while(true) {
+            String transferTo = sc.nextLine();
+            File[] listOfFiles = new File("data"+File.separator+"users").listFiles();
+            boolean foundUser=false;
+            for (int i = 0; i < listOfFiles.length; i++) {
+                if (listOfFiles[i].toString().equals("data"+File.separator+"users"+File.separator+transferTo+".txt")) {
+                    transferToUser=new User(transferTo);
+                    foundUser=true;
+                }
+            }
+            if(foundUser) {
+                break;
+            } else System.out.println("User does not exist");
+        }
+        System.out.println("Please enter the unique ID of the user");
+        //todo
+        System.out.println("Please enter how much you'd like to transfer");
+        float transfer;
+        try {
+            transfer=Float.parseFloat(sc.nextLine());
+            if(transfer>0) {
+                loggedIn.changeBal(-transfer, " ->"+transferToUser.getLoc()+" ");
+                transferToUser.changeBal(transfer, " "+loggedIn.getLoc()+"->");
+                System.out.println("Transfer complete! You now have "+loggedIn.getBal());
             } else {
                 System.out.println("Please enter a positive value");
             }
@@ -214,12 +219,57 @@ public class Main {
         String confirm = sc.nextLine();
         switch(confirm){
             case "1":
-                loggedIn.changeBal(-PremiumCost);
+                loggedIn.changeBal(-PremiumCost, "Premium ");
                 loggedIn.userPremium();;
                 System.out.println("You have successfully signed up for a premium account!");
                 break;
             case "2":
                 break;
+        }
+    }
+
+    /**
+     * @Author Aroon
+     * @param user
+     * @param feedback
+     * A function which is used to submit feedback.
+     */
+    public static void submitFeedback(String user, String feedback){
+        File[] listOfFiles = new File("data").listFiles();
+        boolean exists = false;
+        for (int i = 0; i < listOfFiles.length; i++) {
+            if (listOfFiles[i].toString().equals("data"+File.separator+"feedback"+File.separator+user+"Feedback.txt")) {
+                exists = true;
+            }
+        }
+        if(exists){
+            appendToFile("data"+File.separator+"feedback"+File.separator+user+"Feedback.txt", feedback+"\n");
+        }else{
+            writeToFile("data"+File.separator+"feedback"+File.separator+user+"Feedback.txt", feedback+"\n");
+        }
+    }
+
+    /**
+     * @Author Shailen
+     * This function prints out all of the User's Account history
+     */
+    public static void readAccountHistory() {
+        System.out.println("Account History of " + loggedIn.getLoc() + ":");
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("data" + File.separator + "users" + File.separator + loggedIn.getLoc() + ".txt"));
+            String line = reader.readLine();
+            int lineNum=0;
+            while(line != null) {
+                if(lineNum > 3) {
+                    System.out.println(line);
+                }
+                //readnextline
+                line = reader.readLine();
+                lineNum++;
+            }
+        }
+        catch(IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -278,27 +328,6 @@ public class Main {
         } catch(Exception e){
             e.printStackTrace();
             System.out.println("Error has occurred");
-        }
-    }
-
-    /**
-     * @Author Aroon
-     * @param user
-     * @param feedback
-     * A function which is used to submit feedback.
-     */
-    public static void submitFeedback(String user, String feedback){
-        File[] listOfFiles = new File("data").listFiles();
-        boolean exists = false;
-        for (int i = 0; i < listOfFiles.length; i++) {
-            if (listOfFiles[i].toString().equals("data"+File.separator+"feedback"+File.separator+user+"Feedback.txt")) {
-                exists = true;
-            }
-        }
-        if(exists){
-            appendToFile("data"+File.separator+"feedback"+File.separator+user+"Feedback.txt", feedback+"\n");
-        }else{
-            writeToFile("data"+File.separator+"feedback"+File.separator+user+"Feedback.txt", feedback+"\n");
         }
     }
 }
