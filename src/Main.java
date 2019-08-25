@@ -5,6 +5,7 @@ public class Main {
 
     static User loggedIn;
     static Scanner sc=new Scanner(System.in);
+    static String userName;
 
     public static void main(String[] args) {
         startScreen();
@@ -12,6 +13,7 @@ public class Main {
 
     /**
      * @Author Rana
+     * @Author Aroon
      * Has everything within it
      */
     public static void startScreen() {
@@ -34,7 +36,11 @@ public class Main {
                         break;
                 }
             } else {
-                System.out.println("1 to deposit, 2 to withdraw, 3 to logout, 4 to exit");
+                System.out.println("LDS Financials Banking Services");
+                if(loggedIn.UserPremiumYes() == true) {
+                    System.out.println("Premium User");
+                }
+                System.out.println("1 to deposit, 2 to withdraw, 3 to register for premium, 4 to submit feedback, 5 to log out, 6 to exit");
                 switch(sc.nextLine()) {
                     case "1":
                         deposit();
@@ -43,9 +49,17 @@ public class Main {
                         withdraw();
                         break;
                     case "3":
-                        loggedIn=null;
+                        Premium();
                         break;
                     case "4":
+                        System.out.println("Please enter your feedback:");
+                        String Feedback = sc.nextLine();
+                        submitFeedback(userName,Feedback);
+                        break;
+                    case "5":
+                        loggedIn=null;
+                        break;
+                    case "6":
                         running=false;
                         System.out.println("Exiting");
                         break;
@@ -76,7 +90,23 @@ public class Main {
             System.out.println("Username taken, please enter another");
         }
         String password=doubleVerify("password", "Passwords");
-        writeToFile("data"+File.separator+username+".txt", password+"\n0");
+        writeToFile("data"+File.separator+username+".txt", password+"\n0\n0");
+    }
+
+    /**
+     * @Author Rana
+     */
+    public static void transfer() {
+        System.out.println("Please enter the username to whom you'd like to transfer funds");
+        while(true) {
+            String transferTo = sc.nextLine();
+            File[] listOfFiles = new File("data").listFiles();
+            for (int i = 0; i < listOfFiles.length; i++) {
+                if (listOfFiles[i].toString().equals("data" + File.separator + transferTo + ".txt")) {
+
+                }
+            }
+        }
     }
 
     /**
@@ -149,6 +179,27 @@ public class Main {
     }
 
     /**
+     * @Author Aroon
+     * Runs through process for setting up premium account
+     */
+    public static void Premium() {
+        float PremiumCost = 200;
+        System.out.println("Registering for a premium account will cost you $200.");
+        System.out.println("This money will be deducted from your account. Are you sure?");
+        System.out.println("Press 1 to confirm, press 2 to cancel.");
+        String confirm = sc.nextLine();
+        switch(confirm){
+            case "1":
+                loggedIn.changeBal(-PremiumCost);
+                loggedIn.userPremium();;
+                System.out.println("You have successfully signed up for a premium account!");
+                break;
+            case "2":
+                break;
+        }
+    }
+
+    /**
      * @Author Rana
      * @param info Input
      * @param infoP Input plural
@@ -182,6 +233,50 @@ public class Main {
             writer.close();
         } catch(Exception e) {
             System.out.println("Error has occurred");
+        }
+    }
+
+    /**
+     * @Author Aroon
+     * @param user
+     * @param fd
+     * A function which appends to a file. Created specifically for feedback submission.
+     */
+    public static void appendToFile(String user, String fd){
+        try {
+            File file1 = new File(user);
+            FileWriter fr = new FileWriter(file1, true);
+            BufferedWriter br = new BufferedWriter(fr);
+            br.write(fd + "\n");
+
+            br.close();
+            fr.close();
+        } catch(Exception e){
+            e.printStackTrace();
+            System.out.println("Error has occurred");
+        }
+    }
+
+    /**
+     * @Author Aroon
+     * @param user
+     * @param feedback
+     * A function which is used to submit feedback.
+     */
+    public static void submitFeedback(String user, String feedback){
+        File[] listOfFiles = new File("data").listFiles();
+        boolean exists = false;
+        for (int i = 0; i < listOfFiles.length; i++) {
+            if (listOfFiles[i].toString().equals("data" + File.separator + user + "Feedback.txt")) {
+                exists = true;
+            }
+        }
+        if(exists){
+            appendToFile("data"+File.separator+user+"Feedback.txt", feedback+"\n");
+            System.out.println("File ready for appending");
+
+        }else{
+            writeToFile("data"+File.separator+user+"Feedback.txt", feedback+"\n");
         }
     }
 }
