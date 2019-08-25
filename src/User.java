@@ -28,6 +28,7 @@ public class User {
      */
     void changeBal(float amount, String info) {
         try {
+            now = LocalDateTime.now();
             File tempFile=new File("data"+File.separator+"users"+File.separator+"tempFile.txt");
             BufferedWriter writer = new BufferedWriter(new FileWriter("data"+File.separator+"users"+File.separator+"tempFile.txt"));
             {
