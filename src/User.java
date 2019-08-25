@@ -95,7 +95,7 @@ public class User {
      */
     public Boolean UserPremiumYes(){
         try {
-            String YoN = (Files.readAllLines(Paths.get("data"+File.separator+"users"+File.separator+loc+".txt")).get(1));
+            String YoN = (Files.readAllLines(Paths.get("data"+File.separator+"users"+File.separator+loc+".txt")).get(2));
             if(YoN.equals("Premium")){
                 return true;
             } else{

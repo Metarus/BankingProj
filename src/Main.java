@@ -173,9 +173,9 @@ public class Main {
      * @Author Rana
      */
     public static void transfer() {
-        System.out.println("Please enter the username to whom you'd like to transfer funds");
         User transferToUser=null;
         while(true) {
+            System.out.println("Please enter the username to whom you'd like to transfer funds");
             String transferTo = sc.nextLine();
             File[] listOfFiles = new File("data"+File.separator+"users").listFiles();
             boolean foundUser=false;
