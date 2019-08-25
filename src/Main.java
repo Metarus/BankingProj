@@ -243,7 +243,7 @@ public class Main {
      * A function which is used to submit feedback.
      */
     public static void submitFeedback(String user, String feedback){
-        File[] listOfFiles = new File("data").listFiles();
+        File[] listOfFiles = new File("data"+File.separator+"feedback").listFiles();
         boolean exists = false;
         for (int i = 0; i < listOfFiles.length; i++) {
             if (listOfFiles[i].toString().equals("data"+File.separator+"feedback"+File.separator+user+"Feedback.txt")) {
