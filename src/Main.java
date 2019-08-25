@@ -5,7 +5,6 @@ public class Main {
 
     static User loggedIn;
     static Scanner sc=new Scanner(System.in);
-    static String userName;
 
     public static void main(String[] args) {
         startScreen();
@@ -37,10 +36,10 @@ public class Main {
                 }
             } else {
                 System.out.println("LDS Financials Banking Services");
-                if(loggedIn.UserPremiumYes() == true) {
+                if(loggedIn.UserPremiumYes()) {
                     System.out.println("Premium User");
                 }
-                System.out.println("1 to deposit, 2 to withdraw, 3 to register for premium, 4 to submit feedback, 5 to log out, 6 to exit");
+                System.out.println("1 to deposit, 2 to withdraw, 4 to register for premium, 5 to submit feedback, 6 to log out, 7 to exit");
                 switch(sc.nextLine()) {
                     case "1":
                         deposit();
@@ -49,17 +48,20 @@ public class Main {
                         withdraw();
                         break;
                     case "3":
-                        Premium();
+                        transfer();
                         break;
                     case "4":
-                        System.out.println("Please enter your feedback:");
-                        String Feedback = sc.nextLine();
-                        submitFeedback(userName,Feedback);
+                        Premium();
                         break;
                     case "5":
-                        loggedIn=null;
+                        System.out.println("Please enter your feedback:");
+                        String Feedback = sc.nextLine();
+                        submitFeedback(loggedIn.getLoc(),Feedback);
                         break;
                     case "6":
+                        loggedIn=null;
+                        break;
+                    case "7":
                         running=false;
                         System.out.println("Exiting");
                         break;
@@ -79,10 +81,10 @@ public class Main {
         String username;
         while(true) {
             username=doubleVerify("username", "Usernames");
-            File[] listOfFiles=new File("data").listFiles();
+            File[] listOfFiles=new File("data"+File.separator+"users").listFiles();
             boolean notExist=true;
             for(int i=0; i<listOfFiles.length; i++) {
-                if(listOfFiles[i].toString().equals("data"+File.separator+username+".txt")) {
+                if(listOfFiles[i].toString().equals("data"+File.separator+"users"+File.separator+username+".txt")) {
                     notExist=false;
                 }
             }
@@ -90,7 +92,7 @@ public class Main {
             System.out.println("Username taken, please enter another");
         }
         String password=doubleVerify("password", "Passwords");
-        writeToFile("data"+File.separator+username+".txt", password+"\n0\n0");
+        writeToFile("data"+File.separator+"users"+File.separator+username+".txt", password+"\n0\n0");
     }
 
     /**
@@ -98,14 +100,36 @@ public class Main {
      */
     public static void transfer() {
         System.out.println("Please enter the username to whom you'd like to transfer funds");
+        User transferToUser=null;
         while(true) {
             String transferTo = sc.nextLine();
-            File[] listOfFiles = new File("data").listFiles();
+            File[] listOfFiles = new File("data"+File.separator+"users").listFiles();
+            boolean foundUser=false;
             for (int i = 0; i < listOfFiles.length; i++) {
-                if (listOfFiles[i].toString().equals("data" + File.separator + transferTo + ".txt")) {
-
+                if (listOfFiles[i].toString().equals("data"+File.separator+"users"+File.separator+transferTo+".txt")) {
+                    transferToUser=new User(transferTo);
+                    foundUser=true;
                 }
             }
+            if(foundUser) {
+                break;
+            } else System.out.println("User does not exist");
+        }
+        System.out.println("Please enter the unique ID of the user");
+        //todo
+        System.out.println("Please enter how much you'd like to transfer");
+        float transfer;
+        try {
+            transfer=Float.parseFloat(sc.nextLine());
+            if(transfer>0) {
+                loggedIn.changeBal(-transfer);
+                transferToUser.changeBal(transfer);
+                System.out.println("Transfer complete! You now have "+loggedIn.getBal());
+            } else {
+                System.out.println("Please enter a positive value");
+            }
+        } catch(Exception e) {
+            System.out.println("Please enter a valid number");
         }
     }
 
@@ -117,16 +141,16 @@ public class Main {
         String user;
         System.out.println("Please enter your username");
         user=sc.nextLine();
-        File[] listOfFiles = new File("data").listFiles();
+        File[] listOfFiles = new File("data"+File.separator+"users").listFiles();
         boolean exists=false;
         for(int i=0; i<listOfFiles.length; i++) {
-            if(listOfFiles[i].toString().equals("data"+File.separator+user+".txt")) {
+            if(listOfFiles[i].toString().equals("data"+File.separator+"users"+File.separator+user+".txt")) {
                 exists=true;
             }
         }
         if(exists) {
             try {
-                BufferedReader reader=new BufferedReader(new FileReader("data"+File.separator+user+".txt"));
+                BufferedReader reader=new BufferedReader(new FileReader("data"+File.separator+"users"+File.separator+user+".txt"));
                 System.out.println("Enter your password");
                 if(reader.readLine().equals(sc.nextLine())) {
                     loggedIn=new User(user);
@@ -267,16 +291,14 @@ public class Main {
         File[] listOfFiles = new File("data").listFiles();
         boolean exists = false;
         for (int i = 0; i < listOfFiles.length; i++) {
-            if (listOfFiles[i].toString().equals("data" + File.separator + user + "Feedback.txt")) {
+            if (listOfFiles[i].toString().equals("data"+File.separator+"feedback"+File.separator+user+"Feedback.txt")) {
                 exists = true;
             }
         }
         if(exists){
-            appendToFile("data"+File.separator+user+"Feedback.txt", feedback+"\n");
-            System.out.println("File ready for appending");
-
+            appendToFile("data"+File.separator+"feedback"+File.separator+user+"Feedback.txt", feedback+"\n");
         }else{
-            writeToFile("data"+File.separator+user+"Feedback.txt", feedback+"\n");
+            writeToFile("data"+File.separator+"feedback"+File.separator+user+"Feedback.txt", feedback+"\n");
         }
     }
 }

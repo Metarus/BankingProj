@@ -34,6 +34,11 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\ranal\IdeaProjects\BankingProj\data\users" />
+    </key>
+  </component>
   <component name="RunDashboard">
     <option name="ruleStates">
       <list>
@@ -80,7 +85,7 @@
       <workItem from="1566369754083" duration="602000" />
       <workItem from="1566553243626" duration="918000" />
       <workItem from="1566648040986" duration="2260000" />
-      <workItem from="1566737155112" duration="789000" />
+      <workItem from="1566737155112" duration="2617000" />
     </task>
     <servers />
   </component>
