@@ -36,7 +36,7 @@ public class Main {
                         break;
                 }
             } else {
-                System.out.println("LDS Financials Banking Services");
+                System.out.println("\nLDS Financials Banking Services\nBalance: "+loggedIn.getBal());
                 if(loggedIn.UserPremiumYes()) {
                     System.out.println("Premium User");
                 }
@@ -215,19 +215,24 @@ public class Main {
      * Runs through process for setting up premium account
      */
     public static void Premium() {
-        float PremiumCost = 200;
-        System.out.println("Registering for a premium account will cost you $200.");
-        System.out.println("This money will be deducted from your account. Are you sure?");
-        System.out.println("Press 1 to confirm, press 2 to cancel.");
-        String confirm = sc.nextLine();
-        switch(confirm){
-            case "1":
-                loggedIn.changeBal(-PremiumCost, "Premium ");
-                loggedIn.userPremium();;
-                System.out.println("You have successfully signed up for a premium account!");
-                break;
-            case "2":
-                break;
+        if(loggedIn.UserPremiumYes()) {
+            System.out.println("You're already a premium member!");
+        } else {
+            float PremiumCost = 200;
+            System.out.println("Registering for a premium account will cost you $200.");
+            System.out.println("This money will be deducted from your account. Are you sure?");
+            System.out.println("Press 1 to confirm, press 2 to cancel.");
+            String confirm = sc.nextLine();
+            switch (confirm) {
+                case "1":
+                    loggedIn.changeBal(-PremiumCost, "Premium ");
+                    loggedIn.userPremium();
+                    ;
+                    System.out.println("You have successfully signed up for a premium account!");
+                    break;
+                case "2":
+                    break;
+            }
         }
     }
 
@@ -257,6 +262,7 @@ public class Main {
      * This function prints out all of the User's Account history
      */
     public static void readAccountHistory() {
+        System.out.println("UUID: "+loggedIn.getID());
         System.out.println("Account History of " + loggedIn.getLoc() + ":");
         try {
             BufferedReader reader = new BufferedReader(new FileReader("data" + File.separator + "users" + File.separator + loggedIn.getLoc() + ".txt"));
