@@ -190,20 +190,23 @@ public class Main {
             } else System.out.println("User does not exist");
         }
         System.out.println("Please enter the unique ID of the user");
-        //todo
-        System.out.println("Please enter how much you'd like to transfer");
-        float transfer;
-        try {
-            transfer=Float.parseFloat(sc.nextLine());
-            if(transfer>0) {
-                loggedIn.changeBal(-transfer, " ->"+transferToUser.getLoc()+" ");
-                transferToUser.changeBal(transfer, " "+loggedIn.getLoc()+"->");
-                System.out.println("Transfer complete! You now have "+loggedIn.getBal());
-            } else {
-                System.out.println("Please enter a positive value");
+        if(!sc.nextLine().equals(transferToUser.getID())) {
+            System.out.println("Wrong UUID");
+        } else {
+            System.out.println("Please enter how much you'd like to transfer");
+            float transfer;
+            try {
+                transfer = Float.parseFloat(sc.nextLine());
+                if (transfer > 0) {
+                    loggedIn.changeBal(-transfer, " ->" + transferToUser.getLoc() + " ");
+                    transferToUser.changeBal(transfer, " " + loggedIn.getLoc() + "->");
+                    System.out.println("Transfer complete! You now have " + loggedIn.getBal());
+                } else {
+                    System.out.println("Please enter a positive value");
+                }
+            } catch (Exception e) {
+                System.out.println("Please enter a valid number");
             }
-        } catch(Exception e) {
-            System.out.println("Please enter a valid number");
         }
     }
 

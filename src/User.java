@@ -104,6 +104,23 @@ public class User {
         return false;
     }
 
+    /** @Author Shailen
+     *  @return UUID
+     */
+    public String getID() {
+        try {
+            List<String> lines = Files.readAllLines(Paths.get("data" + File.separator + "users" + File.separator + this.loc + ".txt"));
+            String ID = lines.get(1);
+            return ID;
+        } catch (Exception var2) {
+            return "Error";
+        }
+    }
+
+    /**
+     * @Author Rana
+     * @return Location
+     */
     public String getLoc() { return loc; }
 }
 
